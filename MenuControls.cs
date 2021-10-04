@@ -152,17 +152,41 @@ Can swim: {3}
 
             Console.Write("Choose a technology by its number: ");
 
-            int techNum = int.Parse(Console.ReadLine()) - 1;
+            string techNumStr = Console.ReadLine();
 
-            MatchCriteria.TechnologyId = Technologies[techNum].Guid;
-            PrintMainMenu();
+            int.TryParse(techNumStr, out int techNum);
+
+            if (techNum <= 0)
+            {
+                PrintMainMenu();
+                Console.WriteLine("Must type a positive integer!");
+            }
+            else
+            {
+                techNum -= 1;
+                MatchCriteria.TechnologyId = Technologies[techNum].Guid;
+                PrintMainMenu();
+            }
         }
 
         private void ChangeYearsOfExperience()
         {
             Console.Write("How many years of experience? ");
-            MatchCriteria.YearsOfExperience = int.Parse(Console.ReadLine());
-            PrintMainMenu();
+
+            string years = Console.ReadLine();
+
+            int.TryParse(years, out int yearsOfExperience);
+
+            if (yearsOfExperience <= 0)
+            {
+                PrintMainMenu();
+                Console.WriteLine("Must type a positive integer!");
+            }
+            else
+            {
+                MatchCriteria.YearsOfExperience = yearsOfExperience;
+                PrintMainMenu();
+            }
         }
 
         private void PrintMainMenu()
