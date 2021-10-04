@@ -15,6 +15,12 @@ namespace EternalBlue
 
         public List<Technology> Technologies { get; set; }
 
+        public List<Candidate> Filtered { get; set; }
+
+        public Candidate Current { get; set; }
+
+        public bool SwipingOn { get; set; } = false;
+
         public void Launch()
         {
             Core();
@@ -28,6 +34,9 @@ namespace EternalBlue
             {
                 PrintMainMenu();
 
+                if (SwipingOn)
+                    PrintCandidate();
+
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.T:
@@ -37,7 +46,7 @@ namespace EternalBlue
                         ChangeYearsOfExperience();
                         break;
                     case ConsoleKey.S:
-                        Search();
+                        StartSwiping();
                         break;
                     case ConsoleKey.RightArrow:
                         SwipeRight();
@@ -66,9 +75,38 @@ namespace EternalBlue
             Console.WriteLine("Implement SwipeLeft");
         }
 
-        private void Search()
+        private void PrintCandidate()
         {
-            Console.WriteLine("Implement Search");
+            if (Filtered.Count > 0)
+            {
+                Current = Filtered.First();
+
+                Console.WriteLine(@"
+{0}, {1}
+Years of experience: {2}
+Can swim: {3}
+---",
+                Current.FullName,
+                Current.Gender,
+                Current.Experience.FirstOrDefault(e => e.TechnologyId == MatchCriteria.TechnologyId).YearsOfExperience,
+                Current.CanSwim);
+
+                Filtered.Remove(Current);
+            }
+            else
+            {
+                Console.WriteLine("--- Out of candidates ---");
+            }
+        }
+
+        private void StartSwiping()
+        {
+            Filtered = Candidates.Where(c =>
+                c.Experience.All(e =>
+                e.TechnologyId == MatchCriteria.TechnologyId && e.YearsOfExperience >= MatchCriteria.YearsOfExperience))
+                .ToList();
+
+            SwipingOn = true;
         }
 
         private void ChangeTechnology()
@@ -99,7 +137,7 @@ namespace EternalBlue
 
             Console.WriteLine(
                         $@"Match criteria: [t]echnology: { techName } [y]ears of experience: { MatchCriteria.YearsOfExperience }.
-[S]earch [Q]uit. To swipe: [<-] & [->]"
+[S]tart swiping! [Q]uit. To swipe: [<-] & [->]"
                         );
         }
 
