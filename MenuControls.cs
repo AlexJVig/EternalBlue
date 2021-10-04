@@ -17,6 +17,10 @@ namespace EternalBlue
 
         public List<Candidate> Filtered { get; set; }
 
+        public List<Candidate> ChosenOnes { get; set; }
+
+        public List<Candidate> Rejects { get; set; }
+
         public Candidate Current { get; set; }
 
         public bool SwipingOn { get; set; } = false;
@@ -30,10 +34,10 @@ namespace EternalBlue
         {
             bool loop = true;
 
+            PrintMainMenu();
+
             while (loop)
             {
-                PrintMainMenu();
-
                 if (SwipingOn)
                     PrintCandidate();
 
@@ -54,6 +58,9 @@ namespace EternalBlue
                     case ConsoleKey.LeftArrow:
                         SwipeLeft();
                         break;
+                    case ConsoleKey.D:
+                        DisplayChosenOnes();
+                        break;
                     case ConsoleKey.Q:
                         loop = false;
                         break;
@@ -65,18 +72,46 @@ namespace EternalBlue
             Console.WriteLine("--- Application aborted. ---");
         }
 
+        private void DisplayChosenOnes()
+        {
+            SwipingOn = false;
+            PrintMainMenu();
+
+            if (ChosenOnes.Count == 0)
+                Console.WriteLine("--- No candidates were chosen ---");
+            else
+            {
+                Console.WriteLine(@"
+The candidstes whom were chosen:
+");
+                foreach (var chosen in ChosenOnes)
+                    Console.WriteLine(@"
+{0}, {1}
+Can swim: {2}
+---",
+                    chosen.FullName,
+                    chosen.Gender,
+                    chosen.CanSwim);
+            }
+
+        }
+
         private void SwipeRight()
         {
-            Console.WriteLine("Implement SwipeRight");
+            ChosenOnes.Add(Current);
+            StartSwiping();
         }
 
         private void SwipeLeft()
         {
-            Console.WriteLine("Implement SwipeLeft");
+            Rejects.Add(Current);
+            StartSwiping();
         }
 
         private void PrintCandidate()
         {
+            PrintMainMenu();
+
             if (Filtered.Count > 0)
             {
                 Current = Filtered.First();
@@ -90,8 +125,6 @@ Can swim: {3}
                 Current.Gender,
                 Current.Experience.FirstOrDefault(e => e.TechnologyId == MatchCriteria.TechnologyId).YearsOfExperience,
                 Current.CanSwim);
-
-                Filtered.Remove(Current);
             }
             else
             {
@@ -101,32 +134,35 @@ Can swim: {3}
 
         private void StartSwiping()
         {
-            Filtered = Candidates.Where(c =>
-                c.Experience.All(e =>
-                e.TechnologyId == MatchCriteria.TechnologyId && e.YearsOfExperience >= MatchCriteria.YearsOfExperience))
+            Filtered = Candidates.Except(ChosenOnes).Except(Rejects)
+                .Where(c =>
+                    c.Experience.All(e =>
+                        e.TechnologyId == MatchCriteria.TechnologyId &&
+                        e.YearsOfExperience >= MatchCriteria.YearsOfExperience))
                 .ToList();
 
             SwipingOn = true;
+            PrintMainMenu();
         }
 
         private void ChangeTechnology()
         {
             for (int i = 0; i < Technologies.Count; i++)
-            {
                 Console.WriteLine("{0}. {1}", i + 1, Technologies[i].Name);
-            }
+
             Console.Write("Choose a technology by its number: ");
 
             int techNum = int.Parse(Console.ReadLine()) - 1;
 
             MatchCriteria.TechnologyId = Technologies[techNum].Guid;
+            PrintMainMenu();
         }
 
         private void ChangeYearsOfExperience()
         {
             Console.Write("How many years of experience? ");
-
             MatchCriteria.YearsOfExperience = int.Parse(Console.ReadLine());
+            PrintMainMenu();
         }
 
         private void PrintMainMenu()
@@ -137,7 +173,7 @@ Can swim: {3}
 
             Console.WriteLine(
                         $@"Match criteria: [t]echnology: { techName } [y]ears of experience: { MatchCriteria.YearsOfExperience }.
-[S]tart swiping! [Q]uit. To swipe: [<-] & [->]"
+[S]tart swiping! [Q]uit. To swipe: [<-] & [->]. [D]isplay chosen candidates."
                         );
         }
 
@@ -158,6 +194,8 @@ Can swim: {3}
         public MenuControls()
         {
             svc = new Services();
+            ChosenOnes = new List<Candidate>();
+            Rejects = new List<Candidate>();
 
             Task.WaitAll(Init());
         }
