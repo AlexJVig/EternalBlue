@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace EternalBlue
 {
     public class MenuControls
     {
-        private const string all = "<All>";
+        public Experience MatchCriteria { get; set; }
 
-        public MatchCriteria mc { get; set; }
+        public Services svc { get; set; }
+
+        public List<Candidate> Candidates { get; set; }
+
+        public List<Technology> Technologies { get; set; }
 
         public void Launch()
         {
@@ -72,25 +79,33 @@ namespace EternalBlue
         {
             Console.Write("How many years of experience? ");
 
-            mc.YearsOfExperience = int.Parse(Console.ReadLine());
+            MatchCriteria.YearsOfExperience = int.Parse(Console.ReadLine());
         }
 
         private void PrintMainMenu()
         {
             Console.Clear();
 
-            string selectedTechnology = mc.Technology == string.Empty ? all : mc.Technology;
+            string techName = Technologies.Where(t => t.Guid == MatchCriteria.TechnologyId).FirstOrDefault().Name;
 
             Console.WriteLine(
-                        $"Match criteria: [t]echnology: { selectedTechnology } [y]ears of experience: { mc.YearsOfExperience }."
+                        $"Match criteria: [t]echnology: { techName } [y]ears of experience: { MatchCriteria.YearsOfExperience }."
                         + Environment.NewLine
                         + "[S]earch [Q]uit. To swipe: [<-] & [->]"
                         );
         }
 
+        private async void Init()
+        {
+            Candidates = await svc.GetCandidates();
+            Technologies = await svc.GetTechnologies();
+        }
+
         public MenuControls()
         {
-            mc = new MatchCriteria();
+            svc = new Services();
+
+            Init();
         }
     }
 }
