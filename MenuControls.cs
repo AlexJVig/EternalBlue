@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EternalBlue
 {
@@ -95,17 +96,25 @@ namespace EternalBlue
                         );
         }
 
-        private async void Init()
+        private async Task Init()
         {
             Candidates = await svc.GetCandidates();
             Technologies = await svc.GetTechnologies();
+
+            Technology tech = Technologies.FirstOrDefault();
+
+            MatchCriteria = new Experience()
+            {
+                TechnologyId = tech.Guid,
+                YearsOfExperience = 0
+            };
         }
 
         public MenuControls()
         {
             svc = new Services();
 
-            Init();
+            Task.WaitAll(Init());
         }
     }
 }
