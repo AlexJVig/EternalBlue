@@ -128,7 +128,7 @@ Can swim: {3}
             }
             else
             {
-                Console.WriteLine("--- Out of candidates ---");
+                Console.WriteLine("--- Out of candidates --- Change the match criteria and hit Start Swiping again!");
             }
         }
 
@@ -175,7 +175,7 @@ Can swim: {3}
 
             string years = Console.ReadLine();
 
-            int.TryParse(years, out int yearsOfExperience);
+            _ = int.TryParse(years, out int yearsOfExperience);
 
             if (yearsOfExperience <= 0)
             {
