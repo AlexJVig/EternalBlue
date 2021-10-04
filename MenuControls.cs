@@ -12,9 +12,9 @@ namespace EternalBlue
 
         public void Core()
         {
-            PrintMainMenu();
+            bool loop = true;
 
-            while (Console.ReadKey(true).Key != ConsoleKey.Q)
+            while (loop)
             {
                 PrintMainMenu();
 
@@ -26,12 +26,39 @@ namespace EternalBlue
                     case ConsoleKey.Y:
                         ChangeYearsOfExperience();
                         break;
+                    case ConsoleKey.S:
+                        Search();
+                        break;
+                    case ConsoleKey.RightArrow:
+                        SwipeRight();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        SwipeLeft();
+                        break;
+                    case ConsoleKey.Q:
+                        loop = false;
+                        break;
                     default:
                         break;
                 }
             }
 
             Console.WriteLine("--- Application aborted. ---");
+        }
+
+        private void SwipeRight()
+        {
+            Console.WriteLine("Implement SwipeRight");
+        }
+
+        private void SwipeLeft()
+        {
+            Console.WriteLine("Implement SwipeLeft");
+        }
+
+        private void Search()
+        {
+            Console.WriteLine("Implement Search");
         }
 
         private void ChangeTechnology()
@@ -51,7 +78,9 @@ namespace EternalBlue
             string selectedTechnology = mc.Technology == string.Empty ? all : mc.Technology;
 
             Console.WriteLine(
-                        $"Match criteria: [t]echnology: { selectedTechnology } [y]ears of experience: { mc.YearsOfExperience }. [Q]uit"
+                        $"Match criteria: [t]echnology: { selectedTechnology } [y]ears of experience: { mc.YearsOfExperience }."
+                        + Environment.NewLine
+                        + "[S]earch [Q]uit. To swipe: [<-] & [->]"
                         );
         }
 
