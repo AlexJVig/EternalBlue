@@ -73,7 +73,15 @@ namespace EternalBlue
 
         private void ChangeTechnology()
         {
-            Console.WriteLine("Implement ChangeTechnology");
+            for (int i = 0; i < Technologies.Count; i++)
+            {
+                Console.WriteLine("{0}. {1}", i + 1, Technologies[i].Name);
+            }
+            Console.Write("Choose a technology by its number: ");
+
+            int techNum = int.Parse(Console.ReadLine()) - 1;
+
+            MatchCriteria.TechnologyId = Technologies[techNum].Guid;
         }
 
         private void ChangeYearsOfExperience()
@@ -90,9 +98,8 @@ namespace EternalBlue
             string techName = Technologies.Where(t => t.Guid == MatchCriteria.TechnologyId).FirstOrDefault().Name;
 
             Console.WriteLine(
-                        $"Match criteria: [t]echnology: { techName } [y]ears of experience: { MatchCriteria.YearsOfExperience }."
-                        + Environment.NewLine
-                        + "[S]earch [Q]uit. To swipe: [<-] & [->]"
+                        $@"Match criteria: [t]echnology: { techName } [y]ears of experience: { MatchCriteria.YearsOfExperience }.
+[S]earch [Q]uit. To swipe: [<-] & [->]"
                         );
         }
 
