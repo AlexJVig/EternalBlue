@@ -6,7 +6,9 @@ namespace EternalBlue
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var mc = new MenuControls();
+
+            mc.Launch();
         }
     }
 }
