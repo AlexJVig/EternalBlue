@@ -3,6 +3,8 @@ namespace EternalBlue
 {
     public class MenuControls
     {
+        private const string all = "<All>";
+
         public MatchCriteria mc { get; set; }
 
         public void Launch()
@@ -68,12 +70,14 @@ namespace EternalBlue
 
         private void ChangeYearsOfExperience()
         {
-            Console.WriteLine("Implement ChangeYearsOfExperience");
+            Console.Write("How many years of experience? ");
+
+            mc.YearsOfExperience = int.Parse(Console.ReadLine());
         }
 
-        public void PrintMainMenu()
+        private void PrintMainMenu()
         {
-            const string all = "<All>";
+            Console.Clear();
 
             string selectedTechnology = mc.Technology == string.Empty ? all : mc.Technology;
 
